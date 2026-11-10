@@ -413,7 +413,7 @@
       .index-row .arrow{ font-size: 1.5rem; color: var(--blue); transition: transform .35s var(--ease); }
       .index-row:hover .arrow{ transform: translateX(6px); }
 
-      /* ---------- pinned story ---------- */
+      /* ---------- story / steps ---------- */
       .story{
         background: var(--glass-bg-soft);
         backdrop-filter: blur(12px) saturate(1.4);
@@ -433,6 +433,7 @@
       .story-copy{ position: relative; min-height: 288px; }
       .step-panel{
         position: absolute; inset: 0; opacity: 0; visibility: hidden;
+        transition: opacity .6s var(--ease), visibility .6s;
         background: var(--glass-bg-strong);
         backdrop-filter: blur(20px) saturate(1.55);
         -webkit-backdrop-filter: blur(20px) saturate(1.55);
@@ -827,7 +828,7 @@
         </section>
       </div>
 
-      <!-- ================= (c) PINNED STEPS ================= -->
+      <!-- ================= (c) STEPS (auto-advance) ================= -->
       <section class="story" id="process">
         <div class="story-pin" id="storyPin">
           <div class="wrap">
@@ -1328,7 +1329,7 @@
           });
         });
 
-        /* ---------- story state (shared by pin + buttons) ---------- */
+        /* ---------- story state (shared by auto-play + buttons) ---------- */
         var panels = Array.prototype.slice.call(document.querySelectorAll(".step-panel"));
         var storyNum = document.getElementById("storyNum");
         var storyTitle = document.getElementById("storyTitle");
@@ -1347,6 +1348,35 @@
           if (storyTitle) storyTitle.textContent = titles[i];
         }
         setStep(0);
+
+        /* ---------- story: steps change by themselves every 10s ----------
+           No scroll pin: the page scrolls straight past this section, and the
+           step advances on a timer while the section is on screen. Tapping a
+           step button jumps to that step and restarts the 10s clock. */
+        var autoTimer = null;
+        function stopAuto(){ if (autoTimer){ clearInterval(autoTimer); autoTimer = null; } }
+        function startAuto(){
+          stopAuto();
+          if (reduced || panels.length < 2) return;
+          autoTimer = setInterval(function(){ setStep((currentStep + 1) % panels.length); }, 10000);
+        }
+        progressBtns.forEach(function(btn){
+          btn.addEventListener("click", function(){
+            setStep(parseInt(btn.getAttribute("data-goto"), 10));
+            startAuto();
+          });
+        });
+        if (reduced){
+          /* reduced motion: all three steps shown stacked, no auto-play */
+          document.getElementById("process").classList.add("no-pin");
+          progressBtns.forEach(function(b){ b.style.display = "none"; });
+        } else if ("IntersectionObserver" in window){
+          new IntersectionObserver(function(entries){
+            entries.forEach(function(en){ if (en.isIntersecting) startAuto(); else stopAuto(); });
+          }, { threshold: 0.15 }).observe(document.getElementById("process"));
+        } else {
+          startAuto();
+        }
 
         /* ---------- counters ---------- */
         function animateCount(el){
@@ -1398,29 +1428,7 @@
           gsap.fromTo(".reel-in", { y: 60, opacity: .35 }, { y: 0, opacity: 1, ease: "none",
             scrollTrigger: { trigger: "#reelScroll", start: "top 70%", end: "top top", scrub: 0.6 } });
 
-          /* pinned story: one pin, three steps */
-          var storyTl = gsap.timeline({
-            scrollTrigger: {
-              trigger: "#process", start: "top top", end: "+=2100", scrub: 0.5, pin: true, anticipatePin: 1,
-              onUpdate: function(self){
-                var idx = Math.min(2, Math.floor(self.progress * 3));
-                setStep(idx);
-              }
-            }
-          });
-          storyTl.fromTo("#storyNum", { scale: .94 }, { scale: 1, ease: "none" }, 0)
-                   .fromTo(".story-copy", { y: 26 }, { y: -26, ease: "none" }, 0);
-
-          progressBtns.forEach(function(btn){
-            btn.addEventListener("click", function(){
-              var i = parseInt(btn.getAttribute("data-goto"), 10);
-              var st = storyTl.scrollTrigger;
-              if (st){
-                var y = st.start + (st.end - st.start) * ((i + 0.5) / 3);
-                if (lenis){ lenis.scrollTo(y, { duration: 1.2 }); } else { window.scrollTo({ top: y, behavior: "smooth" }); }
-              }
-            });
-          });
+          /* steps section is not pinned — it auto-advances on a timer (see above) */
 
           /* CTA settles to its full 24px-radius block */
           gsap.fromTo("#ctaShell",
@@ -1433,27 +1441,6 @@
             gsap.from(el, { y: 44, opacity: 0, duration: 1.1, ease: "power3.out",
               scrollTrigger: { trigger: el, start: "top 88%" } });
           });
-        } else {
-          /* no GSAP / reduced motion: story becomes a simple stepper */
-          document.getElementById("process").classList.add("no-pin");
-          if (!reduced){
-            panels.forEach(function(p){ p.classList.remove("active"); });
-            document.getElementById("storyCopy").style.minHeight = "0";
-            panels.forEach(function(p){ p.style.position = "static"; p.style.opacity = "1"; p.style.visibility = "visible"; });
-            progressBtns.forEach(function(btn){
-              btn.addEventListener("click", function(){
-                var i = parseInt(btn.getAttribute("data-goto"), 10);
-                currentStep = -1;
-                storyNum.textContent = "0" + (i + 1);
-                storyTitle.textContent = titles[i];
-                progressBtns.forEach(function(b, idx){ b.classList.toggle("on", idx === i); });
-                panels.forEach(function(p, idx){ p.style.display = idx === i ? "block" : "none"; });
-              });
-            });
-            panels.forEach(function(p, idx){ p.style.display = idx === 0 ? "block" : "none"; });
-          } else {
-            progressBtns.forEach(function(b){ b.style.display = "none"; });
-          }
         }
 
         /* ---------- contact form ---------- */
