@@ -1533,7 +1533,8 @@
         var formResult = document.getElementById("formResult");
         var formFallback = document.getElementById("formFallback");
         var mailtoBtn = document.getElementById("mailtoBtn");
-        var BUSINESS = "business.wealthcreations@gmail.com";
+        var BUSINESS = "sales.wealthcreations@gmail.com";
+        var WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxDAginhOL10I9xtnSi0GCM9ZuXi6ab4BZypVQi14dSqYcMeqhUk7dl1pnrQ2ZcXgsM/exec";
 
         function buildMailto(){
           var name = document.getElementById("fName").value.trim();
@@ -1561,26 +1562,23 @@
             name: document.getElementById("fName").value.trim(),
             email: document.getElementById("fEmail").value.trim(),
             service: document.getElementById("fService").value,
-            message: document.getElementById("fMsg").value.trim(),
-            _replyto: document.getElementById("fEmail").value.trim(),
-            _subject: "Free Quote Request — " + document.getElementById("fService").value,
-            _template: "table",
-            _captcha: "false"
+            message: document.getElementById("fMsg").value.trim()
           };
 
           var controller = ("AbortController" in window) ? new AbortController() : null;
           var timer = setTimeout(function(){ if (controller) controller.abort(); }, 15000);
 
-          fetch("https://formsubmit.co/ajax/" + BUSINESS, {
+          fetch(WEB_APP_URL, {
             method: "POST",
-            headers: { "Content-Type": "application/json", "Accept": "application/json" },
+            headers: { "Content-Type": "text/plain" },
             body: JSON.stringify(payload),
             signal: controller ? controller.signal : undefined
           }).then(function(res){
             clearTimeout(timer);
             if (!res.ok) throw new Error("send failed");
-            return res.json().catch(function(){ return {}; });
-          }).then(function(){
+            return res.json();
+          }).then(function(data){
+            if (!data || data.ok !== true) throw new Error("send failed");
             formFields.style.display = "none";
             formFallback.classList.remove("show");
             formResult.classList.add("show");
