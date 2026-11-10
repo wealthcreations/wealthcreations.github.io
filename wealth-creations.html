@@ -1118,15 +1118,24 @@ function autoResponseText(n,sv){
   var first=(n||'').trim().split(' ')[0]||'there';
   return 'Dear '+first+',\n\nThank you for contacting Wealth Creations.\n\nThis email confirms that we have received your enquiry regarding '+sv+'. Your message is now with our team.\n\nWe review every enquiry carefully, and a member of our team will respond within 24 to 48 hours. If your enquiry is urgent, simply reply to this email and we will do our best to assist you sooner.\n\nThank you for choosing Wealth Creations — we look forward to speaking with you.\n\nKind regards,\nThe Wealth Creations Team\nCreative Services · AI & Technology · Trading Insights';
 }
+var SEND_TIMEOUT_MS=15000;
 function submitToBusinessInbox(payload){
-  return fetch('https://formsubmit.co/ajax/'+BUSINESS_EMAIL,{
-    method:'POST',
-    headers:{'Content-Type':'application/json','Accept':'application/json'},
-    body:JSON.stringify(payload)
-  }).then(function(r){if(!r.ok){throw new Error('send failed');}return r;});
+  var opts={method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify(payload)};
+  var controller=null,timer=null;
+  if(typeof AbortController!=='undefined'){
+    try{controller=new AbortController();opts.signal=controller.signal;timer=setTimeout(function(){try{controller.abort();}catch(e){}},SEND_TIMEOUT_MS);}catch(e){controller=null;}
+  }
+  var fetchPromise=fetch('https://formsubmit.co/ajax/'+BUSINESS_EMAIL,opts).then(function(r){if(timer){clearTimeout(timer);}if(!r.ok){throw new Error('send failed');}return r;},function(err){if(timer){clearTimeout(timer);}throw err;});
+  /* Belt-and-braces: even if a mobile browser ignores the abort signal and the
+     request never settles, this race rejects so the UI can never stay stuck on
+     "Sending…" — the caller restores the Send button and shows fallbacks. */
+  var timeoutPromise=new Promise(function(resolve,reject){setTimeout(function(){var err=new Error('timeout');err.name='TimeoutError';reject(err);},SEND_TIMEOUT_MS+1500);});
+  return Promise.race([fetchPromise,timeoutPromise]);
 }
-function formFailHtml(subject,body){
-  return '<b>Your message could not be sent from the website just now.</b> Send it one of these ways instead — both go to the same inbox:<div class="fsBtns"><a class="btn btn-blue btn-sm" target="_blank" rel="noopener" href="'+gmailComposeUrl(subject,body)+'">Send in Gmail</a><a class="btn btn-ghost btn-sm" href="mailto:'+BUSINESS_EMAIL+'?subject='+encodeURIComponent(subject)+'&amp;body='+encodeURIComponent(body)+'">Open in Email App</a></div>';
+function isTimeoutError(err){return !!err&&(err.name==='AbortError'||err.name==='TimeoutError'||err.message==='timeout');}
+function formFailHtml(subject,body,wasTimeout){
+  var lead=wasTimeout?'<b>Sending is taking too long.</b> Your connection may be slow, so we stopped waiting — please tap Send to try again, or send it one of these ways instead. Both go to the same inbox:':'<b>Your message could not be sent from the website just now.</b> Please tap Send to try again, or send it one of these ways instead — both go to the same inbox:';
+  return lead+'<div class="fsBtns"><a class="btn btn-blue btn-sm" target="_blank" rel="noopener" href="'+gmailComposeUrl(subject,body)+'">Send in Gmail</a><a class="btn btn-ghost btn-sm" href="mailto:'+BUSINESS_EMAIL+'?subject='+encodeURIComponent(subject)+'&amp;body='+encodeURIComponent(body)+'">Open in Email App</a></div>';
 }
 function sendQuote(e){e.preventDefault();
  var n=document.getElementById('qName').value.trim(),em=document.getElementById('qEmail').value.trim(),sv=document.getElementById('qService').value,m=document.getElementById('qMsg').value.trim();
@@ -1134,15 +1143,27 @@ function sendQuote(e){e.preventDefault();
  var subject='Free Quote Request — '+sv;
  var plain='Name: '+n+'\nEmail: '+em+'\nService: '+sv+'\n\nProject details:\n'+m;
  btn.disabled=true;btn.textContent='Sending…';st.className='formStatus';st.innerHTML='';
+ var quoteSettled=false;
+ /* Watchdog: if anything still leaves the button on "Sending…" after the
+    timeout window, force it back to Send with the fallback options. */
+ var quoteWatchdog=setTimeout(function(){
+   if(quoteSettled){return;}
+   if(btn.disabled&&btn.textContent==='Sending…'){
+     btn.disabled=false;btn.textContent='Send';
+     st.className='formStatus err show';st.innerHTML=formFailHtml(subject,plain,true);
+   }
+ },SEND_TIMEOUT_MS+2500);
  submitToBusinessInbox({name:n,email:em,_replyto:em,service:sv,message:m,_subject:subject,_template:'table',_captcha:'false',_autoresponse:autoResponseText(n,sv)})
  .then(function(){
+   quoteSettled=true;clearTimeout(quoteWatchdog);
    document.getElementById('quoteForm').style.display='none';
    document.getElementById('qSuccess').style.display='block';
    toast('✅ Thank you — your message has been received.');
  })
- .catch(function(){
+ .catch(function(err){
+   quoteSettled=true;clearTimeout(quoteWatchdog);
    btn.disabled=false;btn.textContent='Send';
-   st.className='formStatus err show';st.innerHTML=formFailHtml(subject,plain);
+   st.className='formStatus err show';st.innerHTML=formFailHtml(subject,plain,isTimeoutError(err));
  })
  .then(function(){btn.disabled=false;if(btn.textContent==='Sending…'){btn.textContent='Send';}});
  return false;}
@@ -1260,15 +1281,28 @@ function sendQuotePage(e){e.preventDefault();var f=e.target;
   var plain='Name: '+n+'\nEmail: '+em+'\nService: '+sv+'\n\nProject details:\n'+m;
   var btn=f.querySelector('button[type="submit"]'),st=f.querySelector('.formStatus');
   btn.disabled=true;btn.textContent='Sending…';if(st){st.className='formStatus';st.innerHTML='';}
+  var pageSettled=false;
+  /* Watchdog: never leave this form stuck on "Sending…" — after the timeout
+     window, restore Send and show the Gmail / email-app fallbacks. */
+  var pageWatchdog=setTimeout(function(){
+    if(pageSettled){return;}
+    if(btn.disabled&&btn.textContent==='Sending…'){
+      btn.disabled=false;btn.textContent='Send';
+      if(st){st.className='formStatus err show';st.innerHTML=formFailHtml(subject,plain,true);}
+    }
+  },SEND_TIMEOUT_MS+2500);
   submitToBusinessInbox({name:n,email:em,_replyto:em,service:sv,message:m,_subject:subject,_template:'table',_captcha:'false',_autoresponse:autoResponseText(n,sv)})
   .then(function(){
+    pageSettled=true;clearTimeout(pageWatchdog);
     f.innerHTML='<div class="sentPanel"><div class="sentIco" aria-hidden="true">✅</div><h3 style="font-size:22px;margin-top:10px">Thank You — Message Received</h3><p style="color:var(--muted);margin-top:8px">Thank you for contacting Wealth Creations. Your enquiry has been received successfully, and a confirmation email is on its way to you. Our team reviews every enquiry carefully, and we will respond within <b>24 to 48 hours</b>. Thank you for your patience — we look forward to speaking with you.</p></div>';
     toast('✅ Thank you — your message has been received.');
   })
-  .catch(function(){
+  .catch(function(err){
+    pageSettled=true;clearTimeout(pageWatchdog);
     btn.disabled=false;btn.textContent='Send';
-    if(st){st.className='formStatus err show';st.innerHTML=formFailHtml(subject,plain);}
-  });
+    if(st){st.className='formStatus err show';st.innerHTML=formFailHtml(subject,plain,isTimeoutError(err));}
+  })
+  .then(function(){if(btn.textContent==='Sending…'){btn.disabled=false;btn.textContent='Send';}});
   return false;}
 function updateBottomNav(){
   var h=location.hash||'#/home';var slug=h.indexOf('#/')===0?h.slice(2):'home';if(!slug){slug='home';}
