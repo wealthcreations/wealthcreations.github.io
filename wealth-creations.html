@@ -731,7 +731,7 @@
 
       .wc-chat-panel{
         position: fixed; right: 22px; bottom: calc(98px + env(safe-area-inset-bottom, 0px)); z-index: 100;
-        width: min(372px, calc(100vw - 32px)); height: min(580px, calc(100dvh - 128px));
+        width: min(360px, calc(100vw - 32px)); height: min(540px, calc(100dvh - 128px));
         display: flex; flex-direction: column;
         background: rgba(4,18,43,.96);
         border: 1px solid var(--glass-border); border-radius: 20px; overflow: hidden;
@@ -812,10 +812,12 @@
       }
       .wc-send:hover{ background: var(--blue-deep); }
       .wc-send svg{ width: 20px; height: 20px; }
-      .wc-chat-note{ text-align: center; font-size: .7rem; color: var(--muted); padding: 0 16px 10px; flex: none; }
+      .wc-chat-note{ text-align: center; font-size: .72rem; line-height: 1.55; color: var(--muted); padding: 0 20px 12px; flex: none; }
+      .wc-chat-note .wc-note-dot{ display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #35e08a; margin-right: 6px; vertical-align: 1px; }
+      .wc-chat-note strong{ color: var(--ink-soft); font-weight: 600; }
       @media (max-width: 767px){
         .wc-chat-btn{ right: 16px; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); width: 58px; height: 58px; min-height: 58px; }
-        .wc-chat-panel{ right: 12px; left: 12px; width: auto; bottom: calc(86px + env(safe-area-inset-bottom, 0px)); height: min(560px, calc(100dvh - 104px)); border-radius: 18px; }
+        .wc-chat-panel{ right: 16px; left: 16px; width: auto; bottom: calc(86px + env(safe-area-inset-bottom, 0px)); height: min(500px, calc(100dvh - 150px)); border-radius: 18px; }
       }
 
       @media (prefers-reduced-motion: reduce){
@@ -1357,7 +1359,7 @@
           <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M22 2 11 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M22 2 15 22l-4-9-9-4 20-7z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
       </form>
-      <p class="wc-chat-note">We reply instantly here. For a fixed quote, our team replies within 24–48 hours.</p>
+      <p class="wc-chat-note"><strong>Need help or guidance?</strong> If you run into any issue or have a question about our services, I'm here to assist you and help you find the right solution.</p>
     </aside>
 
     <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
@@ -1688,14 +1690,14 @@
           if (has("process", "how it works", "how does it work", "steps", "timeline", "how long", "delivery", "revision")){
             return "<p>Working with us is a simple three-step process:</p><p><strong>01 — Brief:</strong> You tell us what you need through the quote form.<br><strong>02 — Fixed Quote:</strong> We reply within 24–48 hours with scope, timeline and a fixed price.<br><strong>03 — Delivery:</strong> We create, you review, revisions are included, and you receive final files ready to publish.</p>" + CTA;
           }
+          if (has("who are you", "your name", "who is this", "who am i speaking", "who am i talking", "who is talking", "who is speaking", "introduce yourself", "tim")){
+            return "<p>I am <strong>Tim Cock</strong>, speaking from the <strong>Wealth Creations Team</strong>. You are talking directly with our team — I am here to answer your questions about our services, explain our process, and help you start your project whenever you are ready.</p>";
+          }
           if (has("contact", "email", "phone", "talk to", "human", "team", "speak")){
             return "<p>You are already speaking with the Wealth Creations Team — I am Tim Cock, and I am here to help you directly.</p><p>For anything detailed, the fastest route is our quote form: our team reads every enquiry personally and replies within 24–48 hours.</p>" + CTA;
           }
           if (has("service", "offer", "what do you do", "what can you do", "help")){
             return "<p>Wealth Creations is a creative studio offering four core services:</p><p><strong>Video Editing</strong> — YouTube, Reels, TikTok &amp; ads<br><strong>Graphic Design</strong> — logos, branding &amp; social kits<br><strong>Web Development</strong> — fast, premium websites<br><strong>AI Video Creation</strong> — faceless channels &amp; AI content systems</p><p>We also publish AI &amp; Technology guidance and risk-first Trading education. Which service can I tell you more about?</p>";
-          }
-          if (has("who are you", "your name", "tim")){
-            return "<p>I am <strong>Tim Cock</strong>, speaking from the <strong>Wealth Creations Team</strong>. I am here to answer your questions about our services, explain our process, and help you start your project whenever you are ready.</p>";
           }
           if (has("thank", "thanks", "great", "awesome", "perfect")){
             return "<p>You are very welcome. It is a pleasure to help.</p><p>If there is anything else — a service question or a project you have in mind — I am right here.</p>" + CTA;
