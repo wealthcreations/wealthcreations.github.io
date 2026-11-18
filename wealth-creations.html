@@ -186,20 +186,44 @@
         display: none; flex-direction: column; padding: 14px 20px 18px;
       }
       .mobile-menu.open{ display: flex; }
-      .mobile-menu a{
+      .mobile-menu{ max-height: calc(100svh - 108px); overflow-y: auto; }
+      /* top-level rows — direct links and dropdown toggles share one look,
+         mirroring the desktop bar: Home / Services / AI & Technology /
+         Trading / Insights / About, with a caret on every dropdown group */
+      .mobile-menu a.mm-top, .mobile-menu a.mm-cta{
         color: #fff; text-transform: uppercase; font-weight: 600; font-stretch: 112%; letter-spacing: .04em;
         font-size: 1.35rem; text-decoration: none; padding: 13px 2px; border-bottom: 1px solid rgba(140,180,255,.16); line-height: 1.1;
       }
-      .mobile-menu > a:last-child{ border-bottom: 0; color: #7db4ff; }
-      .mobile-menu{ max-height: calc(100svh - 108px); overflow-y: auto; }
-      .mobile-menu .mm-head{
-        display: block; padding: 18px 2px 2px;
-        font-size: .68rem; font-weight: 700; letter-spacing: .22em; text-transform: uppercase; color: #7db4ff;
+      .mobile-menu a.mm-cta{ border-bottom: 0; color: #7db4ff; }
+      .mobile-menu .mm-group{ border-bottom: 1px solid rgba(140,180,255,.16); }
+      .mm-toggle{
+        width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+        background: transparent; border: 0; cursor: pointer; text-align: left;
+        color: #fff; font-family: inherit; text-transform: uppercase; font-weight: 600; font-stretch: 112%; letter-spacing: .04em;
+        font-size: 1.35rem; line-height: 1.1; padding: 13px 2px; min-height: 48px;
       }
-      .mobile-menu a.mm-sub{
-        font-size: 1rem; font-weight: 500; text-transform: none; letter-spacing: 0; font-stretch: 100%;
-        padding: 9px 2px 9px 16px;
+      .mm-toggle .mm-caret{
+        display: inline-block; width: 9px; height: 9px; flex: none; margin-right: 6px;
+        border-right: 2px solid currentColor; border-bottom: 2px solid currentColor;
+        transform: rotate(45deg); transition: transform .3s var(--ease);
       }
+      .mm-group.open .mm-toggle{ color: #7db4ff; }
+      .mm-group.open .mm-toggle .mm-caret{ transform: rotate(225deg); }
+      /* dropdown panel — collapsed until its group is tapped open,
+         same expand/collapse idea as the desktop hover dropdowns */
+      .mm-panel{
+        display: grid; grid-template-rows: 0fr; visibility: hidden;
+        transition: grid-template-rows .38s var(--ease), visibility .38s;
+      }
+      .mm-group.open .mm-panel{ grid-template-rows: 1fr; visibility: visible; }
+      .mm-panel-in{ overflow: hidden; min-height: 0; padding-bottom: 4px; }
+      .mobile-menu .mm-panel a{
+        display: block; color: rgba(255,255,255,.88); text-decoration: none;
+        font-size: 1rem; font-weight: 500; letter-spacing: 0;
+        padding: 10px 2px 10px 16px; min-height: 44px; line-height: 1.25;
+      }
+      .mobile-menu .mm-panel a:active{ color: #fff; }
+      .mobile-menu .mm-panel a.mm-overview{ color: #fff; font-weight: 600; }
 
       /* ---------- buttons: sharp-cornered CTA rectangles ---------- */
       .btn{
@@ -650,9 +674,8 @@
         /* nav: slimmer pill, respect the notch, tighter menu */
         header.pill{ top: calc(10px + env(safe-area-inset-top, 0px)); width: calc(100% - 16px); padding: 7px 9px; }
         .mobile-menu{ top: calc(76px + env(safe-area-inset-top, 0px)); width: calc(100% - 16px); padding: 10px 18px 14px; border-radius: 20px; }
-        .mobile-menu a{ font-size: 1.12rem; padding: 11px 2px; }
-        .mobile-menu .mm-head{ padding: 14px 2px 2px; }
-        .mobile-menu a.mm-sub{ font-size: .98rem; padding: 8px 2px 8px 14px; }
+        .mobile-menu a.mm-top, .mobile-menu a.mm-cta, .mm-toggle{ font-size: 1.12rem; padding: 11px 2px; }
+        .mobile-menu .mm-panel a{ font-size: .98rem; padding: 9px 2px 9px 14px; }
 
         /* full pinned travel on phones too — Lenis keeps it feeling fluid */
         .hero-scroll{ height: 200vh; }
@@ -752,7 +775,7 @@
         .stat .num{ font-size: 1.85rem; }
         .stat{ padding: 18px 14px; }
         .cta-shell h2{ font-size: 8.4vw; }
-        .mobile-menu a{ font-size: 1.05rem; }
+        .mobile-menu a.mm-top, .mobile-menu a.mm-cta, .mm-toggle{ font-size: 1.05rem; }
         .sec-head h2, .contact-grid h2{ font-size: 2.1rem; }
       }
       /* ---------- separate pages (nav routing) ---------- */
@@ -1021,32 +1044,56 @@
     </header>
 
     <div class="mobile-menu" id="mobileMenu" aria-hidden="true" data-lenis-prevent>
-      <a href="#/" data-page="home">Home</a>
-      <span class="mm-head">Creative Services</span>
-      <a class="mm-sub" href="#/services" data-page="services">All Services</a>
-      <a class="mm-sub" href="#/video-editing" data-page="video-editing">Video Editing</a>
-      <a class="mm-sub" href="#/graphic-design" data-page="graphic-design">Graphic Design</a>
-      <a class="mm-sub" href="#/web-development" data-page="web-development">Web Development</a>
-      <a class="mm-sub" href="#/ai-video-creation" data-page="ai-video-creation">AI Video Creation</a>
-      <span class="mm-head">AI &amp; Technology</span>
-      <a class="mm-sub" href="#/ai-tech" data-page="ai-tech">AI &amp; Technology Overview</a>
-      <a class="mm-sub" href="#/ai-tools" data-page="ai-tools">AI Tools</a>
-      <a class="mm-sub" href="#/ai-learning" data-page="ai-learning">AI Learning</a>
-      <a class="mm-sub" href="#/tech-updates" data-page="tech-updates">Tech Updates</a>
-      <a class="mm-sub" href="#/software-reviews" data-page="software-reviews">Software &amp; Tools Reviews</a>
-      <span class="mm-head">Trading</span>
-      <a class="mm-sub" href="#/trading" data-page="trading">Trading Overview</a>
-      <a class="mm-sub" href="#/forex-trading" data-page="forex-trading">Forex Trading</a>
-      <a class="mm-sub" href="#/gold-xau" data-page="gold-xau">Gold — XAU/USD</a>
-      <a class="mm-sub" href="#/market-analysis" data-page="market-analysis">Market Analysis</a>
-      <a class="mm-sub" href="#/trading-education" data-page="trading-education">Trading Education</a>
-      <span class="mm-head">Insights</span>
-      <a class="mm-sub" href="#/insights" data-page="insights">All Insights</a>
-      <a class="mm-sub" href="#/business-finance" data-page="business-finance">Business &amp; Finance</a>
-      <a class="mm-sub" href="#/digital-opportunities" data-page="digital-opportunities">Digital Opportunities</a>
-      <a class="mm-sub" href="#/latest-trends" data-page="latest-trends">Latest Trends</a>
-      <a href="#/about" data-page="about">About</a>
-      <a href="#contact" data-scroll>Get a Free Quote</a>
+      <a class="mm-top" href="#/" data-page="home">Home</a>
+      <div class="mm-group">
+        <button class="mm-toggle" type="button" aria-expanded="false" aria-controls="mmPanelServices"><span>Services</span><span class="mm-caret" aria-hidden="true"></span></button>
+        <div class="mm-panel" id="mmPanelServices">
+          <div class="mm-panel-in">
+            <a class="mm-overview" href="#/services" data-page="services">All Services</a>
+            <a href="#/video-editing" data-page="video-editing">Video Editing</a>
+            <a href="#/graphic-design" data-page="graphic-design">Graphic Design</a>
+            <a href="#/web-development" data-page="web-development">Web Development</a>
+            <a href="#/ai-video-creation" data-page="ai-video-creation">AI Video Creation</a>
+          </div>
+        </div>
+      </div>
+      <div class="mm-group">
+        <button class="mm-toggle" type="button" aria-expanded="false" aria-controls="mmPanelAiTech"><span>AI &amp; Technology</span><span class="mm-caret" aria-hidden="true"></span></button>
+        <div class="mm-panel" id="mmPanelAiTech">
+          <div class="mm-panel-in">
+            <a class="mm-overview" href="#/ai-tech" data-page="ai-tech">AI &amp; Technology Overview</a>
+            <a href="#/ai-tools" data-page="ai-tools">AI Tools</a>
+            <a href="#/ai-learning" data-page="ai-learning">AI Learning</a>
+            <a href="#/tech-updates" data-page="tech-updates">Tech Updates</a>
+            <a href="#/software-reviews" data-page="software-reviews">Software &amp; Tools Reviews</a>
+          </div>
+        </div>
+      </div>
+      <div class="mm-group">
+        <button class="mm-toggle" type="button" aria-expanded="false" aria-controls="mmPanelTrading"><span>Trading</span><span class="mm-caret" aria-hidden="true"></span></button>
+        <div class="mm-panel" id="mmPanelTrading">
+          <div class="mm-panel-in">
+            <a class="mm-overview" href="#/trading" data-page="trading">Trading Overview</a>
+            <a href="#/forex-trading" data-page="forex-trading">Forex Trading</a>
+            <a href="#/gold-xau" data-page="gold-xau">Gold — XAU/USD</a>
+            <a href="#/market-analysis" data-page="market-analysis">Market Analysis</a>
+            <a href="#/trading-education" data-page="trading-education">Trading Education</a>
+          </div>
+        </div>
+      </div>
+      <div class="mm-group">
+        <button class="mm-toggle" type="button" aria-expanded="false" aria-controls="mmPanelInsights"><span>Insights</span><span class="mm-caret" aria-hidden="true"></span></button>
+        <div class="mm-panel" id="mmPanelInsights">
+          <div class="mm-panel-in">
+            <a class="mm-overview" href="#/insights" data-page="insights">All Insights</a>
+            <a href="#/business-finance" data-page="business-finance">Business &amp; Finance</a>
+            <a href="#/digital-opportunities" data-page="digital-opportunities">Digital Opportunities</a>
+            <a href="#/latest-trends" data-page="latest-trends">Latest Trends</a>
+          </div>
+        </div>
+      </div>
+      <a class="mm-top" href="#/about" data-page="about">About</a>
+      <a class="mm-cta" href="#contact" data-scroll>Get a Free Quote</a>
     </div>
 
     <main id="top">
@@ -1569,11 +1616,34 @@
         /* ---------- mobile menu ---------- */
         var burger = document.getElementById("burger");
         var mobileMenu = document.getElementById("mobileMenu");
+        /* mobile dropdowns — the same groups as the desktop bar (Services,
+           AI & Technology, Trading, Insights): tap a group to expand its
+           dropdown, tap again or open another group to collapse it */
+        var mmGroups = Array.prototype.slice.call(mobileMenu.querySelectorAll(".mm-group"));
+        function closeMmGroup(g){
+          g.classList.remove("open");
+          var t = g.querySelector(".mm-toggle");
+          if (t) t.setAttribute("aria-expanded", "false");
+        }
+        mmGroups.forEach(function(g){
+          var t = g.querySelector(".mm-toggle");
+          if (!t) return;
+          t.addEventListener("click", function(){
+            var willOpen = !g.classList.contains("open");
+            mmGroups.forEach(closeMmGroup);
+            if (willOpen){
+              g.classList.add("open");
+              t.setAttribute("aria-expanded", "true");
+            }
+          });
+        });
         function setMenu(open){
           mobileMenu.classList.toggle("open", open);
           mobileMenu.setAttribute("aria-hidden", open ? "false" : "true");
           burger.setAttribute("aria-expanded", open ? "true" : "false");
           burger.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+          /* closing the menu resets every dropdown, like the desktop bar */
+          if (!open) mmGroups.forEach(closeMmGroup);
           /* lock the page behind the open menu so it never scrolls underneath */
           document.body.style.overflow = open ? "hidden" : "";
           if (typeof lenis !== "undefined" && lenis){ if (open) lenis.stop(); else lenis.start(); }
