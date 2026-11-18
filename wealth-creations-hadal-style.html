@@ -65,6 +65,8 @@
       html{ scroll-behavior: auto; }
       html.lenis, html.lenis body{ height: auto; }
       .lenis.lenis-smooth{ scroll-behavior: auto !important; }
+      .lenis.lenis-smooth [data-lenis-prevent]{ overscroll-behavior: contain; }
+      .lenis.lenis-stopped{ overflow: hidden; }
       body{
         margin: 0;
         background: var(--bg);
@@ -110,8 +112,8 @@
         z-index: 80;
         width: min(1440px, calc(100% - 24px));
         background: var(--nav-bg);
-        backdrop-filter: blur(12px) saturate(1.6);
-        -webkit-backdrop-filter: blur(12px) saturate(1.6);
+        backdrop-filter: blur(24px) saturate(1.6);
+        -webkit-backdrop-filter: blur(24px) saturate(1.6);
         border: 1px solid var(--nav-border);
         border-radius: 999px;
         box-shadow: 0 18px 44px rgba(1,10,30,.35), inset 0 1px 0 rgba(210,232,255,.22);
@@ -137,8 +139,8 @@
         position: absolute; top: calc(100% + 12px); left: 50%; transform: translate(-50%, 8px);
         min-width: 238px; padding: 10px; display: flex; flex-direction: column;
         background: var(--nav-bg);
-        backdrop-filter: blur(12px) saturate(1.6);
-        -webkit-backdrop-filter: blur(12px) saturate(1.6);
+        backdrop-filter: blur(24px) saturate(1.6);
+        -webkit-backdrop-filter: blur(24px) saturate(1.6);
         border: 1px solid var(--nav-border); border-radius: 16px;
         box-shadow: 0 24px 54px rgba(1,10,30,.45), inset 0 1px 0 rgba(210,232,255,.20);
         opacity: 0; visibility: hidden;
@@ -177,8 +179,8 @@
         position: fixed; top: 84px; left: 50%; transform: translateX(-50%);
         width: calc(100% - 28px); max-width: 480px; z-index: 90;
         background: var(--nav-bg);
-        backdrop-filter: blur(12px) saturate(1.6);
-        -webkit-backdrop-filter: blur(12px) saturate(1.6);
+        backdrop-filter: blur(24px) saturate(1.6);
+        -webkit-backdrop-filter: blur(24px) saturate(1.6);
         border: 1px solid var(--nav-border); border-radius: 22px;
         box-shadow: 0 24px 54px rgba(1,10,30,.45), inset 0 1px 0 rgba(210,232,255,.20);
         display: none; flex-direction: column; padding: 14px 20px 18px;
@@ -218,7 +220,7 @@
       .wrap{ padding-left: var(--pad); padding-right: var(--pad); max-width: 1680px; margin: 0 auto; }
 
       /* ---------- hero ---------- */
-      .hero-scroll{ height: 150vh; position: relative; }
+      .hero-scroll{ height: 240vh; position: relative; }
       .hero{
         position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden;
         background: #02102a;
@@ -289,7 +291,7 @@
       @keyframes pulse{ 0%{ box-shadow: 0 0 0 0 rgba(53,224,138,.5);} 70%{ box-shadow: 0 0 0 9px rgba(53,224,138,0);} 100%{ box-shadow: 0 0 0 0 rgba(53,224,138,0);} }
 
       /* ---------- pinned showreel ---------- */
-      .reel-scroll{ height: 140vh; position: relative; }
+      .reel-scroll{ height: 220vh; position: relative; }
       .reel{
         position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; background: #02102a;
       }
@@ -319,8 +321,8 @@
       .stat{
         padding: clamp(24px, 3.4vw, 44px);
         background: var(--glass-bg);
-        backdrop-filter: blur(12px) saturate(1.5);
-        -webkit-backdrop-filter: blur(12px) saturate(1.5);
+        backdrop-filter: blur(24px) saturate(1.5);
+        -webkit-backdrop-filter: blur(24px) saturate(1.5);
         border: 1px solid var(--glass-border);
         outline: 1px solid var(--glass-ring); outline-offset: -1px;
         border-radius: 20px;
@@ -336,8 +338,8 @@
       .svc-grid{ display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
       .svc{
         background: var(--glass-bg);
-        backdrop-filter: blur(12px) saturate(1.5);
-        -webkit-backdrop-filter: blur(12px) saturate(1.5);
+        backdrop-filter: blur(24px) saturate(1.5);
+        -webkit-backdrop-filter: blur(24px) saturate(1.5);
         border: 1px solid var(--glass-border);
         outline: 1px solid var(--glass-ring); outline-offset: -1px;
         border-radius: 22px;
@@ -380,8 +382,8 @@
       /* ---------- story / steps ---------- */
       .story{
         background: var(--glass-bg-soft);
-        backdrop-filter: blur(12px) saturate(1.4);
-        -webkit-backdrop-filter: blur(12px) saturate(1.4);
+        backdrop-filter: blur(24px) saturate(1.4);
+        -webkit-backdrop-filter: blur(24px) saturate(1.4);
         border-top: 1px solid var(--glass-border); border-bottom: 1px solid var(--glass-border);
         box-shadow: inset 0 1px 0 rgba(255,255,255,.35);
         overflow: hidden;
@@ -399,8 +401,8 @@
         position: absolute; inset: 0; opacity: 0; visibility: hidden;
         transition: opacity .6s var(--ease), visibility .6s;
         background: var(--glass-bg-strong);
-        backdrop-filter: blur(12px) saturate(1.55);
-        -webkit-backdrop-filter: blur(12px) saturate(1.55);
+        backdrop-filter: blur(24px) saturate(1.55);
+        -webkit-backdrop-filter: blur(24px) saturate(1.55);
         border: 1px solid var(--glass-border);
         outline: 1px solid var(--glass-ring); outline-offset: -1px;
         border-radius: 22px;
@@ -425,8 +427,8 @@
       .work-grid{ display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
       .work{
         background: var(--glass-bg);
-        backdrop-filter: blur(12px) saturate(1.5);
-        -webkit-backdrop-filter: blur(12px) saturate(1.5);
+        backdrop-filter: blur(24px) saturate(1.5);
+        -webkit-backdrop-filter: blur(24px) saturate(1.5);
         border: 1px solid var(--glass-border);
         outline: 1px solid var(--glass-ring); outline-offset: -1px;
         border-radius: 20px;
@@ -443,8 +445,8 @@
       .rev-grid{ display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 0; }
       .rev{
         background: var(--glass-bg);
-        backdrop-filter: blur(12px) saturate(1.5);
-        -webkit-backdrop-filter: blur(12px) saturate(1.5);
+        backdrop-filter: blur(24px) saturate(1.5);
+        -webkit-backdrop-filter: blur(24px) saturate(1.5);
         border: 1px solid var(--glass-border);
         outline: 1px solid var(--glass-ring); outline-offset: -1px;
         border-radius: 20px;
@@ -467,8 +469,8 @@
       .cta-zone{ padding: clamp(70px, 10vw, 130px) var(--pad); max-width: 1680px; margin: 0 auto; }
       .cta-shell{
         background: var(--cta-glass);
-        backdrop-filter: blur(12px) saturate(1.5);
-        -webkit-backdrop-filter: blur(12px) saturate(1.5);
+        backdrop-filter: blur(24px) saturate(1.5);
+        -webkit-backdrop-filter: blur(24px) saturate(1.5);
         border: 1px solid rgba(190,220,255,.42);
         box-shadow: 0 30px 70px rgba(0,55,150,.30), inset 0 1px 0 rgba(255,255,255,.38), inset 0 -1px 0 rgba(255,255,255,.12);
         color: #fff; border-radius: 24px; overflow: hidden; position: relative;
@@ -505,8 +507,8 @@
       .contact-points p{ margin: 0; color: var(--ink-soft); font-size: .95rem; }
       form.quote{
         background: var(--glass-bg-strong);
-        backdrop-filter: blur(12px) saturate(1.55);
-        -webkit-backdrop-filter: blur(12px) saturate(1.55);
+        backdrop-filter: blur(24px) saturate(1.55);
+        -webkit-backdrop-filter: blur(24px) saturate(1.55);
         border: 1px solid var(--glass-border);
         outline: 1px solid var(--glass-ring); outline-offset: -1px;
         border-radius: 22px; padding: clamp(24px, 3.4vw, 42px); box-shadow: var(--glass-shadow);
@@ -515,8 +517,8 @@
       .field label{ display: block; font-size: .68rem; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
       .field input, .field select, .field textarea{
         width: 100%; border: 1px solid var(--glass-ring); border-radius: 12px; background: var(--field-bg);
-        backdrop-filter: blur(8px);
-        -webkit-backdrop-filter: blur(8px);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
         box-shadow: inset 0 1px 0 rgba(255,255,255,.35);
         color: var(--ink); font: inherit; font-size: 1rem; padding: 13px 15px; min-height: 50px;
         transition: border-color .25s, box-shadow .25s;
@@ -538,8 +540,8 @@
       .form-fallback{
         display: none; margin-top: 16px; padding: 16px; text-align: center;
         background: var(--glass-bg);
-        backdrop-filter: blur(14px) saturate(1.4);
-        -webkit-backdrop-filter: blur(14px) saturate(1.4);
+        backdrop-filter: blur(28px) saturate(1.4);
+        -webkit-backdrop-filter: blur(28px) saturate(1.4);
         border: 1px solid var(--glass-border); border-radius: 14px;
         box-shadow: var(--glass-shadow-sm);
       }
@@ -550,8 +552,8 @@
       footer.site{
         border-top: 1px solid var(--glass-border);
         background: var(--glass-bg-soft);
-        backdrop-filter: blur(12px) saturate(1.5);
-        -webkit-backdrop-filter: blur(12px) saturate(1.5);
+        backdrop-filter: blur(24px) saturate(1.5);
+        -webkit-backdrop-filter: blur(24px) saturate(1.5);
         box-shadow: inset 0 1px 0 rgba(255,255,255,.35), 0 -18px 44px rgba(4,44,110,.06);
         padding: 60px 0 30px;
         position: relative; z-index: 1;
@@ -603,9 +605,9 @@
         .mobile-menu .mm-head{ padding: 14px 2px 2px; }
         .mobile-menu a.mm-sub{ font-size: .98rem; padding: 8px 2px 8px 14px; }
 
-        /* shorter pinned travel on phones so scrolling never feels stuck */
-        .hero-scroll{ height: 130vh; }
-        .reel-scroll{ height: 120vh; }
+        /* full pinned travel on phones too — Lenis keeps it feeling fluid */
+        .hero-scroll{ height: 200vh; }
+        .reel-scroll{ height: 180vh; }
         .hero-content{ padding-top: calc(100px + env(safe-area-inset-top, 0px)); padding-bottom: 64px; justify-content: center; }
         .hero h1{ font-size: 7.4vw; letter-spacing: -.015em; }
         .hero h1 .l1, .hero h1 .l2{ margin-left: 0; }
@@ -627,10 +629,11 @@
         .sec-head h2{ font-size: 2.35rem; }
         .sec-head .side{ padding-bottom: 0; }
 
-        /* lighter glass blur on phone GPUs — same look, no scroll lag */
+        /* heavy glass blur kept on phones too — blur is on the compositor,
+           and the scroll animations move transform/opacity only */
         .stat, .svc, .work, .rev, .step-panel, form.quote, .story{
-          backdrop-filter: blur(8px) saturate(1.4);
-          -webkit-backdrop-filter: blur(8px) saturate(1.4);
+          backdrop-filter: blur(16px) saturate(1.4);
+          -webkit-backdrop-filter: blur(16px) saturate(1.4);
         }
 
         /* stats stay 2 x 2 on phones instead of one long column */
@@ -868,7 +871,7 @@
       </div>
     </header>
 
-    <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
+    <div class="mobile-menu" id="mobileMenu" aria-hidden="true" data-lenis-prevent>
       <a href="#top" data-scroll>Home</a>
       <span class="mm-head">Creative Services</span>
       <a class="mm-sub" href="#services" data-scroll>Video Editing</a>
@@ -1340,7 +1343,7 @@
         </div>
         <button class="wc-chat-close" id="wcChatClose" type="button" aria-label="Close chat">×</button>
       </div>
-      <div class="wc-chat-body" id="wcChatBody" aria-live="polite"></div>
+      <div class="wc-chat-body" id="wcChatBody" aria-live="polite" data-lenis-prevent></div>
       <div class="wc-typing" id="wcTyping" aria-hidden="true"><i></i><i></i><i></i></div>
       <div class="wc-chips" id="wcChips">
         <button class="wc-chip" type="button" data-q="What services do you offer?">Our Services</button>
@@ -1357,6 +1360,7 @@
       <p class="wc-chat-note">We reply instantly here. For a fixed quote, our team replies within 24–48 hours.</p>
     </aside>
 
+    <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
     <script>
@@ -1398,11 +1402,31 @@
         }
         tickClock(); setInterval(tickClock, 1000);
 
-        /* ---------- native smooth scroll — no scroll library, so scrolling
-           stays at a clean 60fps on normal PCs and phones ---------- */
+        /* ---------- Lenis smooth scroll (restored) ----------
+           Kept smooth WITHOUT removing it: Lenis is driven by GSAP's own
+           ticker (no second rAF loop fighting the scroll animations), and
+           every scroll animation on the page moves transform/opacity only,
+           so the heavy glass blur never repaints mid-scroll. */
         var lenis = null;
         var hasGsap = typeof window.gsap !== "undefined";
         if (hasGsap && window.ScrollTrigger){ gsap.registerPlugin(ScrollTrigger); }
+        if (!reduced && typeof window.Lenis !== "undefined"){
+          lenis = new Lenis({
+            duration: 1.25,
+            easing: function(t){ return Math.min(1, 1.001 - Math.pow(2, -10 * t)); },
+            smoothWheel: true,
+            wheelMultiplier: 1,
+            touchMultiplier: 1.4
+          });
+          if (hasGsap && window.ScrollTrigger){
+            lenis.on("scroll", ScrollTrigger.update);
+            gsap.ticker.add(function(time){ lenis.raf(time * 1000); });
+            gsap.ticker.lagSmoothing(0);
+          } else {
+            var rafLoop = function(time){ lenis.raf(time); requestAnimationFrame(rafLoop); };
+            requestAnimationFrame(rafLoop);
+          }
+        }
         function scrollToTarget(sel){
           var el = document.querySelector(sel);
           if (!el) return;
